@@ -1,4 +1,9 @@
-> **Bu dal Görev 2'nin çözümüdür.**
+> **Bu dal Görev 2'nin çözümüdür.** Sıradaki görev için `gorev3` dalına geç:
+>
+> ```bash
+> git fetch
+> git checkout gorev3
+> ```
 
 ---
 
