@@ -1,3 +1,7 @@
+> **Bu dal Görev 3'ün çözümüdür.**
+
+---
+
 # Görev 3 — Virtual Threads
 
 **Süre:** 20 dakika · **Java:** 21

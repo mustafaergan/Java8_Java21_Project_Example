@@ -14,9 +14,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /*
- * GOREV 3
- * Bu program derlenir ve calisir, ama SURE_LIMITI_SN icinde bitiremez ve hata verir.
- * README.md dosyasindaki adimlari izleyerek hizlandir.
+ * GOREV 3 - COZUM
  */
 public class Uygulama3 {
 
@@ -33,7 +31,7 @@ public class Uygulama3 {
         AtomicInteger kontrolEdilen = new AtomicInteger();
         long baslangic = System.currentTimeMillis();
 
-        ExecutorService havuz = Executors.newFixedThreadPool(2);          // GOREV 3
+        ExecutorService havuz = Executors.newVirtualThreadPerTaskExecutor();
 
         for (String satir : satirlar) {
             havuz.submit(() -> {
