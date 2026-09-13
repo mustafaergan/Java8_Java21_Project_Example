@@ -1,15 +1,6 @@
-> **Bu dal Görev 2'nin çözümüdür.** Sıradaki görev için `gorev3` dalına geç:
->
-> ```bash
-> git fetch
-> git checkout gorev3
-> ```
+# Görev 3 — Virtual Threads
 
----
-
-# Görev 2 — Text Blocks, var, yeni switch, sealed
-
-**Süre:** 30 dakika · **Java:** 21
+**Süre:** 20 dakika · **Java:** 21
 
 ## 1. Dala geç
 
@@ -17,66 +8,51 @@ Projeyi daha önce çektiysen:
 
 ```bash
 git fetch
-git checkout gorev2
+git checkout gorev3
 ```
 
 İlk kez çekiyorsan:
 
 ```bash
-git clone -b gorev2 https://github.com/mustafaergan/Java8_Java21_Project_Example.git
+git clone -b gorev3 https://github.com/mustafaergan/Java8_Java21_Project_Example.git
 ```
 
 ## 2. Durum
 
-Bu dalda Görev 1'in çözümü hazır. Yeni olarak `bilet.uygulama` modülüne **`Uygulama2`** sınıfı eklendi ve bu sınıf **bilerek hatalı**. Proje derlenmiyor.
+Bu dalda Görev 2'nin çözümü hazır. Yeni olarak `bilet.uygulama` modülüne **`Uygulama3`** sınıfı eklendi. Bu sefer kod **derlenir ve çalışır**, ama işini zamanında bitiremez.
 
-Hatalar iki modülde:
+Program her çalıştığında sırasıyla şunları yapar:
 
-- `bilet.uygulama` modülündeki `Uygulama2.java`: HATA 1–4
-- `bilet.model` modülündeki ödeme türleri `Odeme`, `KrediKarti`, `Nakit`, `Havale`: HATA 5–6
+1. Proje klasörüne 100.000 satırlık, yaklaşık 3 MB büyüklüğünde `biletler.csv` dosyası üretir.
+2. Dosyayı okuyup her satırı bir `Bilet` nesnesine çevirir.
+3. Her bileti havayolunun rezervasyon sistemine sorar. Her sorgu 100 ms sürer; gerçekte bu bir ağ çağrısıdır, burada `Thread.sleep` ile taklit ediliyor.
 
-Hatalı satırların yanında `// HATA 1`, `// HATA 2` gibi işaretler var. Başka dosyaya dokunma.
+Bu işi Java 8'den bildiğimiz yöntemle, **2 thread'lik bir havuzla** yapıyor. İşin 5 saniyede bitmesi gerekiyor, bitmezse program hata veriyor:
 
-> **Not:** Derleyici hataları parça parça gösterir. İlk derlemede sadece HATA 1 görünür. Biri düzeldikçe yenileri çıkar, bu normal.
+```
+Exception in thread "main" java.lang.IllegalStateException: Sure asildi! 5 saniyede sadece 90 / 100000 bilet kontrol edilebildi.
+```
 
-> **IntelliJ kullanıyorsan:** "package is not visible" hatası alırsan **File | Project Structure | Modules | Dependencies** ekranından `bilet.servis` modülüne `bilet.model`'i, `bilet.uygulama` modülüne ikisini de ekle.
+Görevin, programı **5 saniyenin altında** bitirmek. Bilet sayısına, bekleme süresine ve süre limitine dokunma.
 
-## 3. Bu görevde öğreneceğin dört şey
+## 3. Bu görevde öğreneceğin şey
 
-| Konu | Sürüm | Java 8'de | Java 21'de |
-|---|---|---|---|
-| **Text Blocks** | 15 | Çok satırlı metin `"\n"` ve `+` ile birleştirilir | `"""` ile metin olduğu gibi yazılır |
-| **var** | 10 | Tip her seferinde açıkça yazılır | Tip sağ taraftan çıkarılır, ama derlemede sabitlenir |
-| **Yeni switch** | 14 | `case "X":` ve `break` gerekir, değer döndürmez | `case "X" ->` ile değer döndürür, her durum karşılanmalı |
-| **sealed** | 17 | Bir arayüzü herkes uygulayabilir | `permits` ile kimin uygulayabileceği sınırlanır |
+| | Platform thread · Java 8'den beri | Virtual thread · Java 21 |
+|---|---|---|
+| Kim yönetir | İşletim sistemi | JVM |
+| Bellek | Thread başına yaklaşık 1 MB | Birkaç KB |
+| Kaç tane açılabilir | Birkaç bin | Milyonlarca |
+| Beklerken ne olur | Thread boşta kilitli kalır | Altındaki gerçek thread serbest kalır, başka işe geçer |
 
-## 4. Yapılacaklar
+2 thread ile hesap şöyle: 100.000 bilet × 100 ms ÷ 2 thread = 5.000 saniye, yani yaklaşık **83 dakika**.
 
-### Adım 1 — Text Blocks · HATA 1
+> **Önemli:** Sanal thread'ler diskten okumayı ya da hesaplamayı hızlandırmaz. Hızlandırdıkları şey **beklemektir**: ağ çağrısı, veritabanı sorgusu, dış servis. Bu örnekte 3 MB'lık dosyayı okumak bir saniyeden kısa sürüyor; zamanın neredeyse tamamı rezervasyon sistemini beklerken kayboluyor.
 
-`"""` ile açılan metin aynı satırda devam ediyor. Text block'ta açılış `"""` işaretinden sonra **satır bitmeli**.
+## 4. Yapılacak
 
-Metni üç satır olacak şekilde yeniden yaz: `Ucus`, `Rota`, `Fiyat`. Çıktı aşağıdaki gibi hizalı görünmeli.
+`Uygulama3.java` içinde `// GOREV 3` işaretli satırda 2 thread'lik havuz oluşturuluyor. Bu satırı, **her görev için yeni bir sanal thread açan** bir havuzla değiştir.
 
-### Adım 2 — var · HATA 2 ve 3
-
-- **HATA 2:** `var` başlangıç değeri olmadan kullanılamaz, çünkü derleyici tipi o değerden çıkarır. Yolcu sayısını `180` olarak ver.
-- **HATA 3:** `fiyat` değişkeninin tipi ilk satırda `double` olarak belirlendi. Sonradan metin atanamaz, çünkü `var` **dinamik tip değildir**. Bu satırı sil.
-
-### Adım 3 — Yeni switch · HATA 4
-
-Bu `switch` bir değer döndürüyor, bu yüzden **her olasılığı karşılamak zorunda**. `String` sonsuz değer alabilir. Listede olmayan tüm sınıflar için çarpan `1.0` olsun.
-
-### Adım 4 — sealed · HATA 5 ve 6
-
-Ödeme türleri `bilet.model` modülünde, her biri kendi dosyasında. Sealed bir arayüz ile izin verdiği sınıflar **aynı modülde** olmak zorunda, bu yüzden hepsi bir arada duruyor.
-
-- **HATA 5 · `Nakit.java`:** Sealed bir arayüzü uygulayan sınıf `final`, `sealed` ya da `non-sealed` olmak zorunda. `Nakit` sınıfını `final` yap.
-- **HATA 6 · `Havale.java`:** Hata bu dosyada görünür ama düzeltme `Odeme.java` dosyasında yapılır. `Havale`, `Odeme` arayüzünün `permits` listesinde yok. Listeye ekle.
-
-Bunları düzelttiğinde derleyici yeni bir şey söyleyecek: `Uygulama2.java` içindeki `sealedOrnegi` metodunun `switch`'i artık `Havale`'yi karşılamıyor. `Havale` için `"Havale: "` ve IBAN'ı yazan bir `case` ekle.
-
-> Buraya `default` **yazma**. Sealed'ın faydası tam olarak bu: yeni bir ödeme türü eklediğinde derleyici, onu unuttuğun her `switch`'i sana gösterir.
+> **İpucu:** `Executors` sınıfında Java 21 ile gelen bir fabrika metodu var, adında `Virtual` geçiyor. Tek satır değişiklik yeterli.
 
 ## 5. Derle ve çalıştır
 
@@ -85,29 +61,26 @@ javac -d out --module-source-path src -m bilet.model,bilet.servis,bilet.uygulama
 ```
 
 ```bash
-java --module-path out -m bilet.uygulama/bilet.uygulama.Uygulama2
+java --module-path out -m bilet.uygulama/bilet.uygulama.Uygulama3
 ```
 
-Beklenen çıktı:
+Beklenen çıktı; süre makineye göre değişir:
 
 ```
-Ucus  : TK2410
-Rota  : Istanbul - Izmir
-Fiyat : 1450.0 TL
-Yolcu: 180, fiyat: 1450.0
-BUSINESS fiyat carpani: 2.5
-Kredi karti: 4111-XXXX
-Nakit odeme
-Havale: TR12-0001
+...\biletler.csv olusturuldu (3103 KB).
+100000 bilet dosyadan okundu. Kontrol basliyor...
+100000 bilet 625 ms'de kontrol edildi.
 ```
+
+`biletler.csv` proje klasöründe oluşur ve git'e eklenmez.
 
 ## 6. Tamamlandı mı?
 
-- [ ] Proje hatasız derleniyor.
-- [ ] `Uygulama2` beklenen çıktıyı veriyor.
-- [ ] `sealedOrnegi` içindeki `switch`'te `default` yok.
+- [ ] Program hata vermeden bitiyor.
+- [ ] Süre 5 saniyenin altında.
+- [ ] Değiştirdiğin tek şey havuzun oluşturulduğu satır.
 
-## 7. Düşün
+## 7. Dene
 
-1. `sealedOrnegi` içindeki `switch`'e `default` yazsaydın, `Havale`'yi eklediğinde derleyici seni uyarır mıydı?
-2. `switchOrnegi` metodunu Java 8'de nasıl yazardın? Kaç satır sürerdi?
+1. Havuzu geri platform thread'e çevir ama 2 yerine `200` thread ver. Program neden hâlâ yetişemiyor? Neden 100.000 platform thread açmayı denemiyoruz?
+2. `Thread.sleep(100)` yerine işlemciyi 100 ms boyunca meşgul eden bir hesap olsaydı, sanal thread'ler yine bu kadar hızlandırır mıydı?
