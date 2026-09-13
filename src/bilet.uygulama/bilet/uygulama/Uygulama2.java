@@ -1,5 +1,10 @@
 package bilet.uygulama;
 
+import bilet.model.Havale;
+import bilet.model.KrediKarti;
+import bilet.model.Nakit;
+import bilet.model.Odeme;
+
 /*
  * GOREV 2
  * Bu sinif bilerek HATALI birakildi.
@@ -55,11 +60,3 @@ public class Uygulama2 {
         }
     }
 }
-
-sealed interface Odeme permits KrediKarti, Nakit {}
-
-record KrediKarti(String kartNo) implements Odeme {}
-
-class Nakit implements Odeme {}                // HATA 5
-
-record Havale(String iban) implements Odeme {} // HATA 6
