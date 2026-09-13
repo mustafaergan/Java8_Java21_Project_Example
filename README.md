@@ -1,6 +1,6 @@
 # Görev 1 — Modüler uçak bileti iskeleti
 
-**Süre:** 30 dakika · **Java:** 21
+ **Java:** 21
 
 ## 1. Projeyi çek
 
@@ -73,13 +73,7 @@ Bilet[no=1, ucus=Ucus[ucusNo=TK2410, nereden=Istanbul, nereye=Izmir, fiyat=1450.
 
 `toString` yazmadığın halde çıktının okunur gelmesini record sağladı.
 
-## 6. Tamamlandı mı?
-
-- [ ] `Ucus` ve `Bilet` record.
-- [ ] Üç `module-info.java` dolu.
-- [ ] Program beklenen çıktıyı veriyor.
-
-## 7. Dene
+## 6. Deneyebilirsin
 
 Çalıştıktan sonra şunları tek tek dene, sonra geri al:
 
