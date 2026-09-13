@@ -9,7 +9,7 @@
 
 # Görev 1 — Modüler uçak bileti iskeleti
 
-**Süre:** 30 dakika · **Java:** 21
+**Java:** 21
 
 ## 1. Projeyi çek
 
