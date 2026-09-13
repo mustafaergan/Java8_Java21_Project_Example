@@ -9,7 +9,7 @@
 
 # Görev 2 — Text Blocks, var, yeni switch, sealed
 
-**Süre:** 30 dakika · **Java:** 21
+**Java:** 21
 
 ## 1. Dala geç
 
