@@ -25,7 +25,12 @@ git clone -b gorev2 https://github.com/mustafaergan/Java8_Java21_Project_Example
 
 Bu dalda Görev 1'in çözümü hazır. Yeni olarak `bilet.uygulama` modülüne **`Uygulama2`** sınıfı eklendi ve bu sınıf **bilerek hatalı**. Proje derlenmiyor.
 
-Görevin, yalnızca `Uygulama2.java` dosyasını düzeltmek. Hatalı satırların yanında `// HATA 1`, `// HATA 2` gibi işaretler var.
+Hatalar iki modülde:
+
+- `bilet.uygulama` modülündeki `Uygulama2.java`: HATA 1–4
+- `bilet.model` modülündeki ödeme türleri `Odeme`, `KrediKarti`, `Nakit`, `Havale`: HATA 5–6
+
+Hatalı satırların yanında `// HATA 1`, `// HATA 2` gibi işaretler var. Başka dosyaya dokunma.
 
 > **Not:** Derleyici hataları parça parça gösterir. İlk derlemede sadece HATA 1 görünür. Biri düzeldikçe yenileri çıkar, bu normal.
 
@@ -59,10 +64,12 @@ Bu `switch` bir değer döndürüyor, bu yüzden **her olasılığı karşılama
 
 ### Adım 4 — sealed · HATA 5 ve 6
 
-- **HATA 5:** Sealed bir arayüzü uygulayan sınıf `final`, `sealed` ya da `non-sealed` olmak zorunda. `Nakit` sınıfını `final` yap.
-- **HATA 6:** `Havale`, `Odeme` arayüzünün `permits` listesinde yok. Listeye ekle.
+Ödeme türleri `bilet.model` modülünde, her biri kendi dosyasında. Sealed bir arayüz ile izin verdiği sınıflar **aynı modülde** olmak zorunda, bu yüzden hepsi bir arada duruyor.
 
-Bunları düzelttiğinde derleyici yeni bir şey söyleyecek: `sealedOrnegi` içindeki `switch` artık `Havale`'yi karşılamıyor. `Havale` için `"Havale: "` ve IBAN'ı yazan bir `case` ekle.
+- **HATA 5 · `Nakit.java`:** Sealed bir arayüzü uygulayan sınıf `final`, `sealed` ya da `non-sealed` olmak zorunda. `Nakit` sınıfını `final` yap.
+- **HATA 6 · `Havale.java`:** Hata bu dosyada görünür ama düzeltme `Odeme.java` dosyasında yapılır. `Havale`, `Odeme` arayüzünün `permits` listesinde yok. Listeye ekle.
+
+Bunları düzelttiğinde derleyici yeni bir şey söyleyecek: `Uygulama2.java` içindeki `sealedOrnegi` metodunun `switch`'i artık `Havale`'yi karşılamıyor. `Havale` için `"Havale: "` ve IBAN'ı yazan bir `case` ekle.
 
 > Buraya `default` **yazma**. Sealed'ın faydası tam olarak bu: yeni bir ödeme türü eklediğinde derleyici, onu unuttuğun her `switch`'i sana gösterir.
 
