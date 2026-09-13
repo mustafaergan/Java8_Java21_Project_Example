@@ -4,7 +4,7 @@
 
 # Görev 3 — Virtual Threads
 
-**Süre:** 20 dakika · **Java:** 21
+**Java:** 21
 
 ## 1. Dala geç
 
