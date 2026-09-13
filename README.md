@@ -1,3 +1,7 @@
+> **Bu dal Görev 2'nin çözümüdür.**
+
+---
+
 # Görev 2 — Text Blocks, var, yeni switch, sealed
 
 **Süre:** 30 dakika · **Java:** 21

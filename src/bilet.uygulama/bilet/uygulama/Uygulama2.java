@@ -1,9 +1,7 @@
 package bilet.uygulama;
 
 /*
- * GOREV 2
- * Bu sinif bilerek HATALI birakildi.
- * README.md dosyasindaki adimlari izleyerek duzelt.
+ * GOREV 2 - COZUM
  */
 public class Uygulama2 {
 
@@ -16,16 +14,19 @@ public class Uygulama2 {
 
     // ============ 1. Text Blocks ============
     static void textBlockOrnegi() {
-        String bilet = """Ucus: TK2410  Rota: Istanbul - Izmir  Fiyat: 1450.0 TL""";   // HATA 1
+        String bilet = """
+                Ucus  : TK2410
+                Rota  : Istanbul - Izmir
+                Fiyat : 1450.0 TL
+                """;
 
         System.out.print(bilet);
     }
 
     // ============ 2. var ============
     static void varOrnegi() {
-        var yolcuSayisi;                       // HATA 2
+        var yolcuSayisi = 180;
         var fiyat = 1450.0;
-        fiyat = "Bedava";                      // HATA 3
 
         System.out.println("Yolcu: " + yolcuSayisi + ", fiyat: " + fiyat);
     }
@@ -34,9 +35,10 @@ public class Uygulama2 {
     static void switchOrnegi() {
         String sinif = "BUSINESS";
 
-        double carpan = switch (sinif) {       // HATA 4
+        double carpan = switch (sinif) {
             case "EKONOMI"  -> 1.0;
             case "BUSINESS" -> 2.5;
+            default         -> 1.0;
         };
 
         System.out.println(sinif + " fiyat carpani: " + carpan);
@@ -50,16 +52,17 @@ public class Uygulama2 {
             String aciklama = switch (odeme) {
                 case KrediKarti k -> "Kredi karti: " + k.kartNo();
                 case Nakit n      -> "Nakit odeme";
+                case Havale h     -> "Havale: " + h.iban();
             };
             System.out.println(aciklama);
         }
     }
 }
 
-sealed interface Odeme permits KrediKarti, Nakit {}
+sealed interface Odeme permits KrediKarti, Nakit, Havale {}
 
 record KrediKarti(String kartNo) implements Odeme {}
 
-class Nakit implements Odeme {}                // HATA 5
+final class Nakit implements Odeme {}
 
-record Havale(String iban) implements Odeme {} // HATA 6
+record Havale(String iban) implements Odeme {}
