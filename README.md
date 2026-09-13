@@ -1,3 +1,12 @@
+> **Bu dal Görev 1'in çözümüdür.** Sıradaki görev için `gorev2` dalına geç:
+>
+> ```bash
+> git fetch
+> git checkout gorev2
+> ```
+
+---
+
 # Görev 1 — Modüler uçak bileti iskeleti
 
 **Süre:** 30 dakika · **Java:** 21
