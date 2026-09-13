@@ -1,68 +1,66 @@
-> **Bu dal Görev 1'in çözümüdür.** Sıradaki görev için `gorev2` dalına geç:
->
-> ```bash
-> git fetch
-> git checkout gorev2
-> ```
-
----
-
-# Görev 1 — Modüler uçak bileti iskeleti
+# Görev 2 — Text Blocks, var, yeni switch, sealed
 
 **Süre:** 30 dakika · **Java:** 21
 
-## 1. Projeyi çek
+## 1. Dala geç
 
-İlk iş projeyi bilgisayarına al:
+Projeyi daha önce çektiysen:
 
 ```bash
-git clone -b master https://github.com/mustafaergan/Java8_Java21_Project_Example.git
-cd Java8_Java21_Project_Example
+git fetch
+git checkout gorev2
 ```
 
-JDK sürümünü kontrol et. Çıktı `javac 21` ile başlamalı:
+İlk kez çekiyorsan:
 
 ```bash
-javac -version
+git clone -b gorev2 https://github.com/mustafaergan/Java8_Java21_Project_Example.git
 ```
 
 ## 2. Durum
 
-Projede üç modül ve `Uygulama` sınıfı hazır. Ama proje **derlenmiyor**, çünkü `Uygulama`'nın kullandığı sınıflar henüz yok:
+Bu dalda Görev 1'in çözümü hazır. Yeni olarak `bilet.uygulama` modülüne **`Uygulama2`** sınıfı eklendi ve bu sınıf **bilerek hatalı**. Proje derlenmiyor.
 
-```
-error: package bilet.model does not exist
-error: package bilet.servis does not exist
-```
+Görevin, yalnızca `Uygulama2.java` dosyasını düzeltmek. Hatalı satırların yanında `// HATA 1`, `// HATA 2` gibi işaretler var.
 
-Görevin, bu hataları eksik parçaları yazarak gidermek. `Uygulama.java` dosyasına dokunma.
+> **Not:** Derleyici hataları parça parça gösterir. İlk derlemede sadece HATA 1 görünür. Biri düzeldikçe yenileri çıkar, bu normal.
 
-## 3. Bu görevde öğreneceğin iki şey
+> **IntelliJ kullanıyorsan:** "package is not visible" hatası alırsan **File | Project Structure | Modules | Dependencies** ekranından `bilet.servis` modülüne `bilet.model`'i, `bilet.uygulama` modülüne ikisini de ekle.
 
-| Kavram | Java 8'de | Java 21'de |
-|---|---|---|
-| **record** | Alan, kurucu, getter, `equals`, `toString` elle yazılır | Tek satır. Alan okuma `ucus.fiyat()`, `getFiyat()` değil. Alanlar değiştirilemez. |
-| **Modül** | Her `public` sınıf herkese açık | Paket `exports` edilmezse başka modül göremez. Kullanılan modül `requires` ile yazılır. |
+## 3. Bu görevde öğreneceğin dört şey
+
+| Konu | Sürüm | Java 8'de | Java 21'de |
+|---|---|---|---|
+| **Text Blocks** | 15 | Çok satırlı metin `"\n"` ve `+` ile birleştirilir | `"""` ile metin olduğu gibi yazılır |
+| **var** | 10 | Tip her seferinde açıkça yazılır | Tip sağ taraftan çıkarılır, ama derlemede sabitlenir |
+| **Yeni switch** | 14 | `case "X":` ve `break` gerekir, değer döndürmez | `case "X" ->` ile değer döndürür, her durum karşılanmalı |
+| **sealed** | 17 | Bir arayüzü herkes uygulayabilir | `permits` ile kimin uygulayabileceği sınırlanır |
 
 ## 4. Yapılacaklar
 
-### `bilet.model`
+### Adım 1 — Text Blocks · HATA 1
 
-- `Ucus` **record**'u: `ucusNo` (String), `nereden` (String), `nereye` (String), `fiyat` (double)
-- `Bilet` **record**'u: `no` (int), `ucus` (Ucus), `yolcu` (String)
-- `module-info.java`: `bilet.model` paketini dışarı aç.
+`"""` ile açılan metin aynı satırda devam ediyor. Text block'ta açılış `"""` işaretinden sonra **satır bitmeli**.
 
-### `bilet.servis`
+Metni üç satır olacak şekilde yeniden yaz: `Ucus`, `Rota`, `Fiyat`. Çıktı aşağıdaki gibi hizalı görünmeli.
 
-- `BiletServisi` sınıfı, tek metot: `public Bilet sat(Ucus ucus, String yolcu)`
-  - Bilet numarası 1'den başlar, her satışta bir artar.
-- `module-info.java`: `bilet.model`'i kullan, `bilet.servis` paketini dışarı aç.
+### Adım 2 — var · HATA 2 ve 3
 
-### `bilet.uygulama`
+- **HATA 2:** `var` başlangıç değeri olmadan kullanılamaz, çünkü derleyici tipi o değerden çıkarır. Yolcu sayısını `180` olarak ver.
+- **HATA 3:** `fiyat` değişkeninin tipi ilk satırda `double` olarak belirlendi. Sonradan metin atanamaz, çünkü `var` **dinamik tip değildir**. Bu satırı sil.
 
-- `module-info.java`: `bilet.model` ve `bilet.servis`'i kullan.
+### Adım 3 — Yeni switch · HATA 4
 
-> `class` değil `record` kullan. Getter, setter, `equals`, `toString` yazma.
+Bu `switch` bir değer döndürüyor, bu yüzden **her olasılığı karşılamak zorunda**. `String` sonsuz değer alabilir. Listede olmayan tüm sınıflar için çarpan `1.0` olsun.
+
+### Adım 4 — sealed · HATA 5 ve 6
+
+- **HATA 5:** Sealed bir arayüzü uygulayan sınıf `final`, `sealed` ya da `non-sealed` olmak zorunda. `Nakit` sınıfını `final` yap.
+- **HATA 6:** `Havale`, `Odeme` arayüzünün `permits` listesinde yok. Listeye ekle.
+
+Bunları düzelttiğinde derleyici yeni bir şey söyleyecek: `sealedOrnegi` içindeki `switch` artık `Havale`'yi karşılamıyor. `Havale` için `"Havale: "` ve IBAN'ı yazan bir `case` ekle.
+
+> Buraya `default` **yazma**. Sealed'ın faydası tam olarak bu: yeni bir ödeme türü eklediğinde derleyici, onu unuttuğun her `switch`'i sana gösterir.
 
 ## 5. Derle ve çalıştır
 
@@ -71,29 +69,29 @@ javac -d out --module-source-path src -m bilet.model,bilet.servis,bilet.uygulama
 ```
 
 ```bash
-java --module-path out -m bilet.uygulama/bilet.uygulama.Uygulama
+java --module-path out -m bilet.uygulama/bilet.uygulama.Uygulama2
 ```
 
 Beklenen çıktı:
 
 ```
-Bilet[no=1, ucus=Ucus[ucusNo=TK2410, nereden=Istanbul, nereye=Izmir, fiyat=1450.0], yolcu=Ali]
+Ucus  : TK2410
+Rota  : Istanbul - Izmir
+Fiyat : 1450.0 TL
+Yolcu: 180, fiyat: 1450.0
+BUSINESS fiyat carpani: 2.5
+Kredi karti: 4111-XXXX
+Nakit odeme
+Havale: TR12-0001
 ```
-
-`toString` yazmadığın halde çıktının okunur gelmesini record sağladı.
 
 ## 6. Tamamlandı mı?
 
-- [ ] `Ucus` ve `Bilet` record.
-- [ ] Üç `module-info.java` dolu.
-- [ ] Program beklenen çıktıyı veriyor.
+- [ ] Proje hatasız derleniyor.
+- [ ] `Uygulama2` beklenen çıktıyı veriyor.
+- [ ] `sealedOrnegi` içindeki `switch`'te `default` yok.
 
-## 7. Dene
+## 7. Düşün
 
-Çalıştıktan sonra şunları tek tek dene, sonra geri al:
-
-1. `bilet.model`'deki `exports` satırını sil. Derleyici ne diyor?
-2. `Uygulama`'ya `ucus.getFiyat()` yaz. Neden bulunamadı?
-3. `Uygulama`'ya `ucus.fiyat = 999.0;` yaz. Neden değiştirilemedi?
-
-Java 8'de bu üç durumdan hangileri hata verirdi?
+1. `sealedOrnegi` içindeki `switch`'e `default` yazsaydın, `Havale`'yi eklediğinde derleyici seni uyarır mıydı?
+2. `switchOrnegi` metodunu Java 8'de nasıl yazardın? Kaç satır sürerdi?
